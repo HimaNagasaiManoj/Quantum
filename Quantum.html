@@ -1,0 +1,414 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Quantum Blog</title>
+<style>
+$color-primary: #f857a8;
+$color-secondary: #ff5858;
+$color-neutral-lt: #fff;
+$color-neutral-med: #ddd;
+$color-neutral-dk: #444;
+$a-tags: "a, a:active, a:hover, a:visited";
+$a-tags-no-hov: "a:link, a:visited, a:active";
+$headings-font: "Saira Semi Condensed", sans-serif;
+$shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+
+.center {
+  text-align: center;
+  border: 3px solid green;
+}
+@mixin main-gradient {
+  background: $color-primary;
+  background: -webkit-linear-gradient(45deg, $color-primary, $color-secondary);
+  background: linear-gradient(45deg, $color-primary, $color-secondary);
+}
+
+@mixin shadow-box {
+  background-color: $color-neutral-lt;
+  box-shadow: $shadow;
+}
+
+@mixin skew {
+  transform: skew(-20deg);
+}
+
+@mixin unskew {
+  transform: skew(20deg);
+}
+
+/*-------------Reset-------------*/
+button {
+  background: none;
+  box-shadow: none;
+  border: none;
+  cursor: pointer;
+}
+
+button:focus,
+input:focus {
+  outline: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/*-------------Layout-------------*/
+body {
+  line-height: 1.5em;
+  padding: 0;
+  margin: 0;
+}
+
+section {
+  height: 100vh;
+}
+
+#home {
+  background-color: #ddd;
+}
+
+#about {
+  background-color: #aaa;
+}
+
+#work {
+  background-color: #ddd;
+}
+
+#contact {
+  background-color: #aaa;
+}
+
+/*-------------Helpers-------------*/
+.skew {
+  @include skew;
+}
+
+.un-skew {
+  @include unskew;
+}
+
+/*-------------Nav-------------*/
+#nav-wrapper {
+  overflow: hidden;
+  width: 100%;
+  margin: 0 auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+#nav {
+  @include shadow-box;
+  display: flex;
+  flex-direction: column;
+  font-family: $headings-font;
+  height: 4em;
+  overflow: hidden;
+
+  &.nav-visible {
+    height: 100%;
+    overflow: auto;
+  }
+}
+
+.nav {
+  display: flex;
+  height: 4em;
+  line-height: 4em;
+  flex-grow: 1;
+}
+
+.nav-link,
+.logo {
+  padding: 0 1em;
+}
+
+span.gradient {
+  @include main-gradient;
+  padding: 0 1em;
+  position: relative;
+  right: 1em;
+  margin-right: auto;
+
+  &:hover {
+    animation-name: logo-hover;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.17, 0.57, 0.31, 0.85);
+  }
+}
+
+h1.logo {
+  font-weight: 300;
+  font-size: 1.75em;
+  line-height: 0.75em;
+  color: $color-neutral-lt;
+}
+
+h1.logo #{$a-tags} {
+  text-decoration: none;
+  color: $color-neutral-lt;
+}
+
+.nav-link {
+  text-transform: uppercase;
+  text-align: center;
+  border-top: 0.5px solid $color-neutral-med;
+}
+
+#{$a-tags-no-hov} {
+  text-decoration: none;
+  color: $color-primary;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.btn-nav {
+  color: $color-primary;
+  padding-left: 2em;
+  padding-right: 2em;
+}
+
+@media (min-width: 800px) {
+  #nav-wrapper {
+    overflow: hidden;
+  }
+
+  #nav {
+    overflow: hidden;
+    flex-direction: row;
+  }
+
+  .nav-link {
+    border-top: none;
+  }
+
+  .right {
+    overflow: hidden;
+    flex-direction: row;
+    justify-content: flex-end;
+    position: relative;
+    left: 1.5em;
+    height: auto;
+  }
+
+  .btn-nav {
+    display: none;
+  }
+
+  .nav #{$a-tags-no-hov} {
+    &.active {
+      @include main-gradient;
+      color: #fff;
+    }
+  }
+
+  .nav-link-span {
+    @include unskew;
+    display: inline-block;
+  }
+
+  .nav-link {
+    @include skew;
+    color: #777;
+    text-decoration: none;
+
+    &:last-child {
+      padding-right: 3em;
+    }
+  }
+
+  a:hover.nav-link:not(.active) {
+    color: $color-neutral-dk;
+    background: $color-neutral-med;
+    background: linear-gradient(45deg, $color-neutral-lt, #ddd);
+  }
+}
+
+@keyframes logo-hover {
+  20% {
+    padding-right: 0em;
+  }
+  100% {
+    padding-right: 5em;
+  }
+}
+
+
+</style>
+</head>
+<body>
+
+ <script>
+var util = {
+  mobileMenu() {
+    $("#nav").toggleClass("nav-visible");
+  },
+  windowResize() {
+    if ($(window).width() > 800) {
+      $("#nav").removeClass("nav-visible");
+    }
+  },
+  scrollEvent() {
+    var scrollPosition = $(document).scrollTop();
+    
+    $.each(util.scrollMenuIds, function(i) {
+      var link = util.scrollMenuIds[i],
+          container = $(link).attr("href"),
+          containerOffset = $(container).offset().top,
+          containerHeight = $(container).outerHeight(),
+          containerBottom = containerOffset + containerHeight;
+
+      if (scrollPosition < containerBottom - 20 && scrollPosition >= containerOffset - 20) {
+        $(link).addClass("active");
+      } else {
+        $(link).removeClass("active");
+      }
+    });
+  }
+};
+
+$(document).ready(function() {
+  
+  util.scrollMenuIds = $("a.nav-link[href]");
+  $("#menu").click(util.mobileMenu);
+  $(window).resize(util.windowResize);
+  $(document).scroll(util.scrollEvent);
+  
+});
+</script>
+
+  <header id="nav-wrapper">
+    <nav id="nav">
+      <div class="nav left">
+
+        
+        <button id="menu" class="btn-nav"><span class="fas fa-bars"></span></button>
+      </div>
+      <div class="nav right">
+        <a href="#home" class="nav-link active"><span class="nav-link-span"><span class="u-nav">Home</span></span></a>
+        <a href="#about" class="nav-link"><span class="nav-link-span"><span class="u-nav">About</span></span></a>
+        <a href="#work" class="nav-link"><span class="nav-link-span"><span class="u-nav">Hardy's Paradox</span></span></a>
+        <a href="#contact" class="nav-link"><span class="nav-link-span"><span class="u-nav">Puzzle</span></span></a>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <section id="home"><br><br><br><br><br><br>
+<div class="center">
+<b><center>
+QUANTUM COMPUTING
+(BLOG)</b></div>
+<br></center>
+<p> As a student, I really felt very excited by knowing about Quantum Computing and its properties.<br>
+We have learnt Physics and its properties from school and I never thought anything would be more exciting than Physics until I came to know about Quantum Computing.<br><br><b>
+
+First of all we will discuss about Quantum Computing</b><
+<br>
+<b>What is Quantum Computing?</b><br>
+Quantum computing uses quantum mechanics to solve problems which cannot be solved by classical computers.
+<br>
+●	The smallest scales of the universe or the smallest particles, at the level of an atom,the laws of physics are weird. We can know the location of an electron by the laws of physics but not the speed of an electron. This job can be done by Quantum Physics.<br>
+●	Quantum physics comes into action when the laws of physics fail in the case of smallest measurements.<br>
+●	A quantum is a smallest unit of something.
+<br><b>
+For example-</b> A quantum of Human Population is a person.<br>
+                      A quantum of Electromagnetic radiation is a photon.
+
+<br>
+<b>Quantum Weirdness:</b>
+It occurs when the normal laws or rules can’t explain quantum physics.
+<br>
+Usually quantum weirdness covers superposition and entanglement in my syllabus.<br>
+I feel a bit confused between superposition and entanglement everytime.<br>
+So I learned by my own creative knowledge comparing and differentiating between them.<br>
+
+    </section>
+    <section id="about"><br><br><br><br>
+<b>Superposition:</b>
+<br>
+A state of being in multiple locations at once each with a different probability. (Which I learnt from my textbook)
+<br>
+Take Rain as an example for superposition.<br>
+Rain can be in multiple locations at same time. For example It is raining in Bangalore and Hyderabad. Rain is in two locations but in bangalore it would be in different probability like heavy or medium as compared to rain in hyderabad and vice-versa.
+(This is how I remembered superposition)
+<br>
+<b>Entanglement:</b>
+<br>
+The properties of the two particles are related even if the particles are separated.(Which I learnt from my textbook)
+<br>
+Take two particles, a pair of electrons or a pair of photons as an example for entanglement.<br>
+They remain connected even when separated by large distances.
+</section>
+    <section id="work">
+<br><br><br><b>
+<center>
+HARDY’S PARADOX</b><br><br></center>
+
+Hardy paradox is a thought experiment in quantum mechanics in which a particle and its antiparticle may interact without annihilating each other.
+<br>
+Annihilation is a process that occurs when the subatomic particles collide with their antiparticles to produce other particles.
+<br>
+<b>Understanding the Hardy Paradox:</b>
+The Hardy paradox, proposed by physicist Lucien Hardy, is a puzzle that highlights the peculiar nature of quantum mechanics. It revolves around the concept of entanglement—a phenomenon where the states of two or more particles become correlated, regardless of the distance between them.
+<br>
+For example, Imagine two entangled particles, A and B, that are far apart. Hardy's paradox involves making certain observations on these particles. Here's a simplified version of the puzzle:
+<br>
+●	Start with particle A and particle B in an entangled state.<br>
+●	Two possible measurements: "A detects 1" and "B detects 1," denoted as A₁ and B₁, respectively.<br>
+●	Similarly, two other possible measurements: "A detects 0" and "B detects 0," denoted as A₀ and B₀, respectively.<br>
+<br><b>
+Scenario:</b><br>
+In the Hardy paradox, the strange thing is that if we make measurements A₁ and B₁, we never observe both outcomes simultaneously. In other words, if A₁ is detected, B₁ is never detected, and vice versa. <br>However, when we perform statistical analysis on a large number of experiments, we find that both A₁ and B₁ occur with a nonzero probability, even though they never seem to happen together.
+<br><b>
+Puzzling:<br></b>
+Now, let's delve into the paradoxical nature of Hardy's puzzle. It challenges our intuition about how cause and effect work. In a classical world, we might expect that if two events are independent, they can occur together or independently. However, in the quantum realm, this expectation is turned on its head.
+<br>
+Quantum mechanics allows for the existence of so-called "quantum correlations" or "nonlocal" effects. These effects imply that the outcome of one measurement can instantaneously influence the outcome of a distant measurement, defying our classical understanding of causality.
+<br></section>
+    <section id="contact"><br><br><br><br>
+<center>
+<b>Appreciating the Puzzle:</b><br></center>
+The Hardy paradox showcases the strangeness of quantum mechanics and emphasizes the uniqueness of the quantum world compared to classical physics. It challenges our preconceived notions about how reality works and pushes the boundaries of our understanding.
+<br>
+<b>At Last:</b><br>
+Puzzle enthusiasts! You've explored the captivating realm of the Hardy paradox without delving too deeply into the mathematical intricacies. We've discovered that this mind-bending puzzle forces us to question our assumptions about causality and challenges our intuition about how the world works.
+<br>
+Whether you love puzzles or are simply fascinated by the mysteries of the universe, the Hardy paradox offers a tantalizing glimpse into the enigmatic realm of quantum mechanics. Embrace the paradox, let your curiosity soar, and continue to explore the captivating wonders of the quantum world.<br>
+
+    
+
+    
+
+    </section>
+  </main>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
